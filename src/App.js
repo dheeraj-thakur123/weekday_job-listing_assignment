@@ -2,10 +2,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchJobs } from './redux/action/jobAction'
-import JobCard from './components/jobCard'
+import JobCard from './components/jobCard/index'
 import { CircularProgress, Grid, TextField } from '@mui/material'
 import FilterAutocomplete from './components/hoc/autoComplete'
-import { capitalizeWords } from './components/utils/helper'
+import { capitalizeWords } from './utils/helper'
 
 const experienceOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 const basePayOptions = [1, 5, 10, 20, 30, 50, 80, 100, 150, 200]
@@ -27,10 +27,9 @@ const App = () => {
     role: '',
     minBasePay: ''
   })
-  const [filteredJobs, setFilteredJobs] = useState(jobs)
-  const [roles, setRoles] = useState([])
-  const [location, setLocations] = useState([])
-
+  const [filteredJobs, setFilteredJobs] = useState(jobs);
+  const [roles, setRoles] = useState([]);
+  const [location, setLocations] = useState([]);
   // Function to apply filters and fetch filtered jobs
   const applyFilters = useCallback(() => {
     let filterJobs = jobs.filter(job => {
@@ -64,7 +63,7 @@ const App = () => {
   useEffect(() => {
     // Fetch initial data when component mounts
     if (jobs.length === 0) {
-      dispatch(fetchJobs(limit, offset))
+      dispatch(fetchJobs(limit, offset));
     } else {
       // Extract unique roles from the list of jobs
       const uniqueRoles = [
@@ -112,7 +111,7 @@ const App = () => {
 
   // Render job listings
   return (
-    <Grid container spacing={2} sx={{padding:'16px 16px'  }}>
+    <Grid container spacing={2} sx={{ padding: '16px 16px' }}>
       <Grid
         item
         container
@@ -122,7 +121,7 @@ const App = () => {
       >
         {roles.length > 0 && (
           <>
-            <Grid item xs={12} sm={6} md={1.7} >
+            <Grid item xs={12} sm={6} md={1.7}>
               <FilterAutocomplete
                 label='Roles'
                 options={roles}
@@ -177,20 +176,22 @@ const App = () => {
           />
         </Grid>
       </Grid>
-      {filteredJobs.map((job, index) => (
-        <Grid
-          key={index}
-          item
-          xs={12}
-          sm={6}
-          md={4}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
-          <div style={{ height: '100%' }}>
-            <JobCard {...job} />
-          </div>
-        </Grid>
-      ))}
+      {filteredJobs.length > 0 && (
+        filteredJobs.map((job, index) => (
+          <Grid
+            key={index}
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{ display: 'flex', justifyContent: 'center' }}
+          >
+            <div style={{ height: '100%' }}>
+              <JobCard {...job} />
+            </div>
+          </Grid>
+        ))
+      )}
       {/* {loading && <p>Loading more...</p>} */}
       {loading && (
         <Grid
@@ -208,7 +209,11 @@ const App = () => {
           />
         </Grid>
       )}
-      {error && <p>Error: {error}</p>}
+      {error && (
+        <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
+          <h1>Error: {error}</h1>
+        </Grid>
+      )}
     </Grid>
   )
 }
